@@ -42,8 +42,7 @@ class sqlite3utils (object):
 
 	def get_all_tables_name(self):
 		keys, tables = self.__get_tables()
-		ret = [name[1] for name in tables]
-		return ret
+		return [name[1] for name in tables]
 
 	def get_all_tables(self):
 		keys, tables = self.__get_tables()
@@ -57,8 +56,7 @@ class sqlite3utils (object):
 
 	def get_all_views_name(self):
 		keys, views = self.__get_views()
-		ret = [name[1] for name in views]
-		return ret
+		return [name[1] for name in views]
 
 	def get_all_views(self):
 		keys, views = self.__get_views()
