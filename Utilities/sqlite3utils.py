@@ -12,7 +12,7 @@ class sqlite3utils (object):
     def run_query(self, sql):
         c = self.conn.execute(sql)
         data = c.fetchall()
-        keys = [name[0] for name in c.description] if c.description else None
+        keys = [name[0] for name in c.description or []]
         return keys, data
 
     def get_table_data(self, table):
