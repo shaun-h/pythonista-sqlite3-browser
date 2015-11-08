@@ -1,5 +1,5 @@
 # coding: utf-8
-# coding: utf-8
+
 import sys
 if '..' not in  sys.path:
 	sys.path.insert(0, '..')
@@ -16,11 +16,11 @@ class tableobjectsview(object):
 
 	def tableview_did_select(self, tableview, section, row):
 		return
-		
+
 	def tableview_title_for_header(self, tableview, section):
-		if section == 0 and len(self.tinfo) > 0:
+		if section == 0 and self.tinfo:
 			return 'Columns'
-		elif section == 1 and len(self.iinfo) > 0:
+		elif section == 1 and self.iinfo:
 			return 'Indexes'
 
 	def tableview_number_of_sections(self, tableview):
@@ -31,20 +31,20 @@ class tableobjectsview(object):
 			return len(self.tinfo)
 		elif section == 1:
 			return len(self.iinfo)
-		
+
 	def tableview_cell_for_row(self, tableview, section, row):
 		cell = ui.TableViewCell('subtitle')
 		if section == 0:
-			nullable = 'False'
-			if self.tinfo[row][3] == 1:
-				nullable = 'True'
+			nullable = self.tinfo[row][3] == 1
 			cell.text_label.text = self.tinfo[row][1]
-			cell.detail_text_label.text = 'Type: ' + self.tinfo[row][2] + ' Nullable: ' + nullable + ' Default: ' + str(self.tinfo[row][4])
+			fmt = 'Type: {} Nullable: {} Default: {}'
+			cell.detail_text_label.text = fmt.format(self.tinfo[row][2], nullable, self.tinfo[row][4])
 		elif section == 1:
 			cell.text_label.text = self.iinfo[row][1]
 		cell.selectable = False
 		return cell
-		
+
+
 class dataobjectview(object):
 	def __init__(self, dbp, table):
 		self.currentid = 1
@@ -56,7 +56,7 @@ class dataobjectview(object):
 
 	def tableview_did_select(self, tableview, section, row):
 		return
-		
+
 	def tableview_title_for_header(self, tableview, section):
 		return
 
@@ -66,7 +66,7 @@ class dataobjectview(object):
 	def tableview_number_of_rows(self, tableview, section):
 		if section == 0:
 			return len(self.tdata[self.currentid-1])+1
-		
+
 	def tableview_cell_for_row(self, tableview, section, row):
 		cell = ui.TableViewCell('value1')
 		if section == 0:
@@ -78,30 +78,21 @@ class dataobjectview(object):
 				cell.detail_text_label.text = str(self.tdata[self.currentid-1][row-1])
 		cell.selectable = False
 		return cell
-		
+
 	def initial_button_config(self):
-		if self.currentid >= self.maxnumber:
-			return False, False
-		else:
-			return True, False
-			
+		return self.currentid < self.maxnumber, False
+
 	def prev(self):
-		self.currentid -=1
-		if self.currentid > 1:
-			return True, True
-		else:
-			return True, False
-	
+		self.currentid -= 1
+		return True, self.currentid > 1:
+
 	def next(self):
-		self.currentid +=1
-		if self.currentid >= self.maxnumber:
-			return False, True
-		else:
-			return True, True
-	
+		self.currentid += 1
+		return self.currentid < self.maxnumber, True
+
 	def return_count_label(self):
-		return str(self.currentid)+'/'+str(self.maxnumber)
-	
+		return '{}/{}'.format(self.currentid, self.maxnumber)
+
 
 class tbo (object):
 	def __init__(self):
@@ -109,7 +100,7 @@ class tbo (object):
 		self.data_v = ui.TableView()
 		self.nbutton = ui.Button(title='Next')
 		self.pbutton = ui.Button(title='Prev')
-		
+
 	def test(self, sender):
 		if sender.selected_index == 0:
 			self.schema_v.hidden = False
@@ -121,11 +112,11 @@ class tbo (object):
 			self.data_v.hidden = False
 			self.pbutton.hidden = False
 			self.nbutton.hidden = False
-	
+
 	def next(self, sender):
 		self.nbutton.enabled, self.pbutton.enabled = self.ov.next()
 		self.data_v.reload_data()
-		
+
 	def prev(self, sender):
 		self.nbutton.enabled, self.pbutton.enabled = self.ov.prev()
 		self.data_v.reload_data()
@@ -182,4 +173,3 @@ class tbo (object):
 		t.add_subview(self.pbutton)
 		t.add_subview(self.nbutton)
 		return t
-	
