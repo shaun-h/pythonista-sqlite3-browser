@@ -84,7 +84,7 @@ class dataobjectview(object):
 
 	def prev(self):
 		self.currentid -= 1
-		return True, self.currentid > 1:
+		return True, self.currentid > 1
 
 	def next(self):
 		self.currentid += 1
